@@ -1,0 +1,80 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: zalenium
+  namespace: zalenium
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zalenium
+        role: grid
+    spec:
+      containers:
+        - name: zalenium
+          image: dosel/zalenium:3
+          args:
+            - start
+            - '--desiredContainers'
+            - "$(desiredContainers)"
+            - '--maxDockerSeleniumContainers'
+            - "$(maxDockerSeleniumContainers)"
+            - '--sauceLabsEnabled'
+            - "$(sauceLabsEnabled)"
+            - '--browserStackEnabled'
+            - "$(browserStackEnabled)"
+            - '--testingBotEnabled'
+            - "$(testingBotEnabled)"
+            - '--startTunnel'
+            - "$(startTunnel)"
+            - '--videoRecordingEnabled'
+            - "$(videoRecordingEnabled)"
+            - '--screenWidth'
+            - "$(screenWidth)"
+            - '--screenHeight'
+            - "$(screenHeight)"
+            - '--timeZone'
+            - "$(timeZone)"
+            - '--sendAnonymousUsageInfo'
+            - "$(sendAnonymousUsageInfo)"
+            - '--debugEnabled'
+            - "$(debugEnabled)"
+            - '--logJson'
+            - "$(logJson)"
+            - '--logbackConfigFilePath'
+            - "$(logbackConfigFilePath)"
+            - '--seleniumImageName'
+            - "$(seleniumImageName)"
+            - '--maxTestSessions'
+            - "$(maxTestSessions)"
+            - '--keepOnlyFailedTests'
+            - "$(keepOnlyFailedTests)"
+            - '--retentionPeriod'
+            - "$(retentionPeriod)"
+          envFrom:
+            - configMapRef:
+                name: zalenium-kubernetes-config
+            - configMapRef:
+                name: zalenium-config
+          resources:
+            requests:
+              cpu: 250m
+              memory: 400Mi
+          ports:
+            - containerPort: 4444
+            - containerPort: 4445
+          volumeMounts:
+            - name: zalenium-data
+              mountPath: /home/seluser/videos
+            - name: zalenium-mounted
+              mountPath: /tmp/mounted
+      volumes:
+          - name: zalenium-data
+            persistentVolumeClaim:
+              claimName: zalenium-data
+          - name: zalenium-mounted
+            persistentVolumeClaim:
+              claimName: zalenium-mounted
+      serviceAccountName: zalenium
+      serviceAccount: zalenium
