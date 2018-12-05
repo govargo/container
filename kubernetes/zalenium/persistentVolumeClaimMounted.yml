@@ -4,6 +4,10 @@ metadata:
   name: zalenium-mounted
   namespace: zalenium
 spec:
+  storageClassName: ""
+  selector:
+    matchLabels:
+      name: zalenium-mounted
   accessModes:
     - ReadWriteMany
   resources:
