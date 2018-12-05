@@ -7,4 +7,5 @@ services:
       - "./test.sh:/usr/local/bin/test.sh"
       - "./sampleTest.rb:/usr/src/sampleTest.rb"
     environment:
-      - "ZALENIUM_HD=192.168.43.36:31409"
+      # Change endpoint according to your environment
+      - "ZALENIUM_HD=192.168.43.36:30299"

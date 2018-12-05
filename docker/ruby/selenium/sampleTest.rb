@@ -3,7 +3,7 @@ require "selenium-webdriver"
 HD = ENV['ZALENIUM_HD']
 
 caps = Selenium::WebDriver::Remote::Capabilities.chrome(
-  "name" => "hello zalenium",
+  "name" => "sample test",
   "recordVideo" => true
 )
 
