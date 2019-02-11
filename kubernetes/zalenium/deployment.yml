@@ -72,6 +72,19 @@ spec:
               mountPath: /home/seluser/videos
             - name: zalenium-mounted
               mountPath: /tmp/mounted
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4444
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /grid/console
+              port: 4444
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
       volumes:
           - name: zalenium-data
             persistentVolumeClaim:
