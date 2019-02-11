@@ -2,8 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# replicaCount(Pod Count)
 replicaCount: 1
 
+# zalenium image
 image:
   repository: dosel/zalenium
   tag: 3
@@ -12,6 +14,7 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# service discovery
 service:
   type: NodePort
   sessionAffinity: None
@@ -22,6 +25,7 @@ service:
     port: 4445
     targetPort: 4445
 
+# resource & limit
 resources:
   limits:
     cpu: 250m
@@ -30,6 +34,7 @@ resources:
     cpu: 250m
     memory: 400Mi
 
+# related resource & limit
 kubernetes:
   cpu_request: "250m"
   cpu_limit: "500m"
@@ -37,6 +42,7 @@ kubernetes:
   memory_limit: "1Gi"
   override_wait_time: "5m"
 
+# zalenium config
 zalenium:
   desiredContainers: "2"
   maxDockerSeleniumContainers: "4"
@@ -57,12 +63,36 @@ zalenium:
   keepOnlyFailedTests: "false"
   retentionPeriod: "3"
 
+# volumeMount. if you don't want persistentVolume, you should comment out following section.
 volumeMounts:
   - name: zalenium-data
     mountPath: /home/seluser/videos
   - name: zalenium-mounted
     mountPath: /tmp/mounted
 
+# volume. if you don't want persistentVolume, you should comment out following section.
+volumes:
+  - name: zalenium-data
+    persistentVolumeClaim:
+      claimName: zalenium-data
+  - name: zalenium-mounted
+    persistentVolumeClaim:
+      claimName: zalenium-mounted
+
+# persistentVolume. if you don't want persistentVolume, you should comment out following section.
+persistentVolume:
+  data:
+    name: zalenium-data
+    accessModes: ReadWriteMany
+    size: 2Gi
+    storageClass: hostpath
+  mounted:
+    name: zalenium-mounted
+    accessModes: ReadWriteMany
+    size: 2Gi
+    storageClass: hostpath
+
+# livenessProbe. if you don't want livnessProbe, you should comment out following section.
 livenessProbe:
   httpGet:
     path: "/"
@@ -73,6 +103,7 @@ livenessProbe:
   successThreshold: 1
   failureThreshold: 5
 
+# readinessProbe. if you don't want readinessProbe, you should comment out following section.
 readinessProbe:
   httpGet:
     path: "/grid/console"
@@ -82,25 +113,3 @@ readinessProbe:
   timeoutSeconds: 60
   successThreshold: 1
   failureThreshold: 5
-
-volumes:
-  - name: zalenium-data
-    persistentVolumeClaim:
-      claimName: zalenium-data
-  - name: zalenium-mounted
-    persistentVolumeClaim:
-      claimName: zalenium-mounted
-
-persistentVolume:
-  data:
-    enabled: true
-    name: zalenium-data
-    accessModes: ReadWriteMany
-    size: 2Gi
-    storageClass: hostpath
-  mounted:
-    enabled: true
-    name: zalenium-mounted
-    accessModes: ReadWriteMany
-    size: 2Gi
-    storageClass: hostpath

@@ -71,18 +71,17 @@ spec:
               value: {{ .Values.kubernetes.memory_limit | quote }}
             - name: OVERRIDE_WAIT_TIME
               value: {{ .Values.kubernetes.override_wait_time | quote }}
+          ports:
+            - containerPort: 4444
+            - containerPort: 4445
 {{- if .Values.resources }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- end }}
-          ports:
-            - containerPort: 4444
-            - containerPort: 4445
 {{- if .Values.volumeMounts }}
           volumeMounts:
 {{ toYaml .Values.volumeMounts | indent 12 }}
 {{- end }}
-
 {{- if .Values.livenessProbe }}
           livenessProbe:
 {{ toYaml .Values.livenessProbe | indent 12 }}
