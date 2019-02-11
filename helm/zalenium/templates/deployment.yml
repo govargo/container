@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "zalenium.fullname" . }}
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ template "zalenium.name" . }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ template "zalenium.fullname" . }}"
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        role: "grid"
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - start
+            - '--desiredContainers'
+            - {{ .Values.zalenium.desiredContainers | quote }}
+            - '--maxDockerSeleniumContainers'
+            - {{ .Values.zalenium.maxDockerSeleniumContainers | quote }}
+            - '--sauceLabsEnabled'
+            - {{ .Values.zalenium.sauceLabsEnabled | quote }}
+            - '--browserStackEnabled'
+            - {{ .Values.zalenium.browserStackEnabled | quote }}
+            - '--testingBotEnabled'
+            - {{ .Values.zalenium.testingBotEnabled | quote }}
+            - '--startTunnel'
+            - {{ .Values.zalenium.startTunnel | quote }}
+            - '--videoRecordingEnabled'
+            - {{ .Values.zalenium.videoRecordingEnabled | quote }}
+            - '--screenWidth'
+            - {{ .Values.zalenium.screenWidth | quote }}
+            - '--screenHeight'
+            - {{ .Values.zalenium.screenHeight | quote }}
+            - '--timeZone'
+            - {{ .Values.zalenium.timeZone | quote }}
+            - '--sendAnonymousUsageInfo'
+            - {{ .Values.zalenium.sendAnonymousUsageInfo | quote }}
+            - '--debugEnabled'
+            - {{ .Values.zalenium.debugEnabled | quote }}
+            - '--logJson'
+            - {{ .Values.zalenium.logJson | quote }}
+            - '--logbackConfigFilePath'
+            - {{ .Values.zalenium.logbackConfigFilePath | quote }}
+            - '--seleniumImageName'
+            - {{ .Values.zalenium.seleniumImageName | quote }}
+            - '--maxTestSessions'
+            - {{ .Values.zalenium.maxTestSessions | quote }}
+            - '--keepOnlyFailedTests'
+            - {{ .Values.zalenium.keepOnlyFailedTests | quote }}
+            - '--retentionPeriod'
+            - {{ .Values.zalenium.retentionPeriod | quote }}
+          env:
+            - name: ZALENIUM_KUBERNETES_CPU_REQUEST
+              value: {{ .Values.kubernetes.cpu_request | quote }}
+            - name: ZALENIUM_KUBERNETES_CPU_LIMIT
+              value: {{ .Values.kubernetes.cpu_limit | quote }}
+            - name: ZALENIUM_KUBERNETES_MEMORY_REQUEST
+              value: {{ .Values.kubernetes.memory_request | quote }}
+            - name: ZALENIUM_KUBERNETES_MEMORY_LIMIT
+              value: {{ .Values.kubernetes.memory_limit | quote }}
+            - name: OVERRIDE_WAIT_TIME
+              value: {{ .Values.kubernetes.override_wait_time | quote }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+          ports:
+            - containerPort: 4444
+            - containerPort: 4445
+          volumeMounts:
+{{ if .Values.volumeMounts -}}
+{{ toYaml .Values.volumeMounts | indent 12 }}
+{{- end }}
+          livenessProbe:
+{{ if .Values.livenessProbe -}}
+{{ toYaml .Values.livenessProbe | indent 12 }}
+{{- end }}
+          readinessProbe:
+{{ if .Values.readinessProbe -}}
+{{ toYaml .Values.readinessProbe | indent 12 }}
+{{- end }}
+      volumes:
+{{ if .Values.volumes -}}
+{{ toYaml .Values.volumes | indent 8 }}
+{{- end }}
+      serviceAccountName: {{ template "zalenium.fullname" . }}

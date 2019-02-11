@@ -1,0 +1,22 @@
+{{- if and .Values.persistentVolume.data.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistentVolume.data.name }}
+spec:
+{{- if .Values.persistentVolume.data.storageClass }}
+{{- if (eq "-" .Values.persistentVolume.data.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: {{ .Values.persistentVolume.data.storageClass }}
+{{- end }}
+{{- end }}
+  selector:
+    matchLabels:
+      name: {{ .Values.persistentVolume.data.name }}
+  accessModes:
+    - {{ .Values.persistentVolume.data.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolume.data.size }}
+{{- end }}

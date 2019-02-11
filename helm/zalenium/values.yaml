@@ -1,0 +1,108 @@
+# Default values for zalenium.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: dosel/zalenium
+  tag: 3
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: NodePort
+  sessionAffinity: None
+  zalenium:
+    port: 4444
+    targetPort: 4444
+  register:
+    port: 4445
+    targetPort: 4445
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 400Mi
+  requests:
+    cpu: 250m
+    memory: 400Mi
+
+kubernetes:
+  cpu_request: "250m"
+  cpu_limit: "500m"
+  memory_request: "500Mi"
+  memory_limit: "1Gi"
+  override_wait_time: "5m"
+
+zalenium:
+  desiredContainers: "2"
+  maxDockerSeleniumContainers: "4"
+  sauceLabsEnabled: "false"
+  browserStackEnabled: "false"
+  testingBotEnabled: "false"
+  startTunnel: "false"
+  videoRecordingEnabled: "true"
+  screenWidth: "1900"
+  screenHeight: "1880"
+  timeZone: "Asia/Tokyo"
+  sendAnonymousUsageInfo: "true"
+  debugEnabled: "true"
+  logJson: "false"
+  logbackConfigFilePath: "logback.xml"
+  seleniumImageName: "elgalu/selenium"
+  maxTestSessions: "1"
+  keepOnlyFailedTests: "false"
+  retentionPeriod: "3"
+
+volumeMounts:
+  - name: zalenium-data
+    mountPath: /home/seluser/videos
+  - name: zalenium-mounted
+    mountPath: /tmp/mounted
+
+livenessProbe:
+  httpGet:
+    path: "/"
+    port: 4444
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 60
+  successThreshold: 1
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: "/grid/console"
+    port: 4444
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 60
+  successThreshold: 1
+  failureThreshold: 5
+
+volumes:
+  - name: zalenium-data
+    persistentVolumeClaim:
+      claimName: zalenium-data
+  - name: zalenium-mounted
+    persistentVolumeClaim:
+      claimName: zalenium-mounted
+
+persistentVolume:
+  data:
+    enabled: true
+    name: zalenium-data
+    accessModes: ReadWriteMany
+    size: 2Gi
+    storageClass: hostpath
+  mounted:
+    enabled: true
+    name: zalenium-mounted
+    accessModes: ReadWriteMany
+    size: 2Gi
+    storageClass: hostpath
+    
+
