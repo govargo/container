@@ -104,5 +104,3 @@ persistentVolume:
     accessModes: ReadWriteMany
     size: 2Gi
     storageClass: hostpath
-    
-
