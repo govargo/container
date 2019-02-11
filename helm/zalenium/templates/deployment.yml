@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: "{{ template "zalenium.name" . }}"
+      app: "{{ template "zalenium.fullname" . }}"
   template:
     metadata:
       labels:

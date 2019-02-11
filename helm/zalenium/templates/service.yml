@@ -20,5 +20,5 @@ spec:
     targetPort: {{ .Values.service.register.targetPort }}
   sessionAffinity: {{ .Values.service.sessionAffinity | quote }}
   selector:
-    app: "{{ template "zalenium.name" . }}"
+    app: "{{ template "zalenium.fullname" . }}"
     role: "grid"
