@@ -1,0 +1,17 @@
+version: "3"
+services:
+  master:
+    container_name: jenkins-master
+    image: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+
+  slave:
+    container_name: jenkins-slave
+    image: jenkinsci/slave
+    command: java -jar /usr/share/jenkins/slave.jar -jnlpUrl http://master:8080/computer/agent/slave-agent.jnlp
+    links:
+     - master
