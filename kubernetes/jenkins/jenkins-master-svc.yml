@@ -5,7 +5,7 @@ metadata:
   labels:
     app: jenkins
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 8080
       name: http
